@@ -1,0 +1,137 @@
+Automotive CAN overview. 
+
+We will review the applications, signaling, and protocol aspects. 
+
+Here is a typical automotive body network example. 
+
+The CAN bus allows for components to talk to each other seamlessly in the automobile. The LIN bus allows for further expansion to peripheral devices. This bus hierarchy was designed to save costs and wiring. 
+
+Wire is one of the most expensive components in a car. It's heavy and often made by hand, which can cost lots of money. Anything that can be done to reduce wiring is done. 
+
+CAN is the main bus in the automobile. It allows different modules to talk to each other, such as power seats, door modules and climate control units. 
+
+It's a differential two-wire interface operating up to 1 megabit per second. Future CAN FD implementations will allow speeds faster than that. 
+
+Automotive CAN interfaces are dictated by the ISO11898 standard. There are six parts to the standard. 
+
+Part 1 is the data link layer and physical signaling. 
+
+Part 2 allows for high-speed medium access. 
+
+Part 3 allows for low-speed fault-tolerant medium-dependent interfaces. 
+
+Part 4 is time triggered communication. 
+
+Part 5 is high-speed medium access unit with low-power mode. This includes all the requirements of Part 2 yet adds a low-power mode requirements. 
+
+Part 6 is high-speed medium access unit with selective wake. This is sometimes referred to as partial networking. 
+
+The ISO11898 standards and carmakers' naming conventions have generated a lot of confusion by using terms like low-speed, medium-speed, and high-speed. 
+
+The ISO11898 CAN standards and transceivers implementations fall into two categories-- high-speed CAN, governed by Parts 2, 5 and 6 of the standard, operate from 0 bits per second, up to 1 megabit per second. 
+
+TI Turbo CAN transceivers, for industrial applications, can go faster than the 1 megabit per second ISO specification. 
+
+Low-speed fault-tolerant CAN, governed by Part 3, operates from approximately 15 kilobits per second up to 125 kilobits per second. 
+
+It should be noted that there is an overlap in operating speed from approximately 10 kilobits per second to 125 kilobits per second, between the high-speed and low-speed fault-tolerant CAN. 
+
+Some car makers use only high-speed CAN physical layers governed by Parts 2, 5, and 6, but use the following names to describe the operating data rates of their networks-- low-speed, which is 125 kilobits per second; medium-speed, at 250 kilobits per second; and high-speed, for 500 kilobits per second. 
+
+There are many additional CAN-based standards and protocols. Higher layer protocols govern aeronautical, agricultural, embedded, industrial automation, military, marine, and safety critical applications. 
+
+Each of these higher layer protocols also have additional test standards that govern EMC and ESD. 
+
+The CAN physical layer has two wires-- CANH and CANL. The difference in the voltage between CANH and CANL is called VD. 
+
+A logic 1 is represented by the recessive state and is defined as VD less than or equal to 0.5 volts. A logic 0 is defined by the dominant state when VD is greater than or equal to 0.9 volts. A CAN compliant driver must produce at least 1.5 volts across a typical 60 ohm load. 
+
+CAN is designed to be used with twisted pair cabling with a 120 ohm characteristic impedance. The network should be wired in a topology that limits stubs as much as possible. 
+
+The bus should be properly terminated at both ends with resistors that match the impedance of the network. This helps to reduce signal integrity issues like reflections. 
+
+If nodes may be removed from the bus, care must be used on where to place the termination resistors. 
+
+Termination may be a single 120 ohm resistor at each end of the bus, or a split termination may be used. Utilizing split termination improves signal integrity and electromagnetic emissions. 
+
+Split termination eliminates fluctuations in the bus common-mode voltage levels. 
+
+Since CAN networks may be shorted to voltage sources, the power ratings of the termination resistors should take into account the short circuit current protection of the CAN transceivers in the network. 
+
+The CAN data frame begins with the Start of Frame. It's a dominant bit that begins the frame and initiates arbitration. 
+
+This is followed by the message identifier, which is an 11 or 29-bit identifier used for arbitration priority. 
+
+The Control Field specifies the length of the data to be transmitted. This is followed by the Data Field and the CRC. 
+
+The ACK field is used to acknowledge the CRC status of receiving nodes. 
+
+The End of Frame marks the end of the data frame and remote frames. 
+
+The CAN physical layer allows for priority-based arbitration, which is based on the 11-bit identifier of each module. 
+
+All zeros is the highest priority identifier, and all ones is the lowest priority identifier. 
+
+During each bit of the identifier frame, each node will monitor the bus and compare the bus state with the state it is driving. If the transceiver transmits a logic 1 and receives a logic 0, it will stop transmitting. The node will attempt to access the bus again after the next inner-frame spacing occurrence. 
+
+Loop Time in CAN. 
+
+The maximum length and operating rate of a CAN bus depend on several factors-- the CAN controller IO; the TXD and RXD is negligible; CAN transceiver driver and receiver delay, often called T Loop; cable length-- max cable length of 40 meter at 1 megabit per second, given a 5 nanosecond per meter typical delay value; other delays introduced by additional serious component, such as isolators. 
+
+Arbitration is the key to a CAN network. Knowing the loop and round trip delay is critical. 
+
+Each node must know the total round trip delay to ensure it waits long enough before sampling the bus data, or the faster node may sample the bus data before the slower node bit state transmission. 
+
+Each component in the system contributes to the total round trip delay. For instance, the round trip delay is two times the T propagation from node A to B, the isolator delay, the transceiver delay, and the controller IO delay. 
+
+Each node needs to know its own TXD to RXD loop delay as well as the round trip delay, so that it is programmed with an appropriate sample point to accommodate worst-case delays in the network. 
+
+Faster loop times allow for more propagation delay budget for isolation devices and/or longer cables without compromising data rate. 
+
+Specific parameters related to timing and synchronization can be set up in the CAN controller to accommodate propagation delays. 
+
+In a CAN frame, a bit of opposite polarity is inserted after five consecutive bits of the same polarity. This practice is called Bit Stuffing and is due to the "Non Return to Zero" coding adopted by the standard. The stuffed data frames are de-stuffed by the receiver. Since bit stuffing is used, six consecutive bits of the same type are considered an error. 
+
+Another important aspect of the CAN protocol is the acknowledgment. The ACK bit occurs after the data and CRC fields and allows a receiver to indicate back to the transmitter that the frame has been received. During this bit, multiple CAN transceivers may be driving dominant simultaneously. 
+
+Here is the 8-pin CAN standard pinout. The TXD, RXD, CANH, and CANL are present on all 8-pin CAN transceivers. Additionally, some transceivers implement either Standby mode or Silent mode. In Standby mode, the driver is disabled while the receiver is in a low-power wake-up mode. For Silent mode, the receiver is enabled and mirrors the bus while the driver is disabled. 
+
+The VIO, or split pins, are also available on some transceivers. The VIO pin provides a separate supply voltage for the transceiver IO pins, TXD and RXD. 
+
+The SPLIT pin provides a VCC over 2 output to stabilize the bus common-mode voltage for applications using split termination. 
+
+Here is a CAN node configuration example for a car. Each node has a processor with a CAN controller and transceiver. 
+
+There are optional external components that some systems may have-- diodes for ESD or transient protection on the CAN bus lines outside of the CAN transceiver spec; SPLIT node termination; SPLIT node termination with common-mode bus stabilization output; and some MCUs do not have internal pull-up resistors and will need an external pull-up for fast data rates. 
+
+CAN with flexible data rate is typically referred to as CAN FD. It's an enhancement to the CAN protocol, which increases usable bandwidth up to and above 2 megabits per second. 
+
+Two key differences between CAN and CAN FD protocols are the data rate and the data field length. CAN FD frames have the option to have separate data rates for the arbitration and data portion. Arbitration portions adhere to CAN, while the data may be transferred at a higher data rate. 
+
+CAN FD frames allow for data fields up to 64 bytes-- eight times more than standard CAN. 
+
+Increased bandwidth is one of the major advantages of CAN FD. The 8-byte limitation of the CAN data rate is constraining for some applications and requires multiple messages to send to the requisite data. With CAN FD, you can send the same data in 1/2 the time as standard CAN, or two times the data in the same amount of time. 
+
+It also has lower relative cost and complexity, with a small incremental cost to increased bandwidth, and less complexity than implementing major network changes, such as FlexRay or Ethernet. 
+
+Fast flash programming-- CAN FD also allows for, fast end of the line flash programming of modules in ECUs, reducing manufacturing costs. 
+
+What system components are impacted by CAN FD? The CAN controller in the microcontroller is one. Hardware changes may be limited to the CAN controller in the microcontroller, assuming a data rate above 1 megabit per second is never used. 
+
+The CAN controller in the microcontroller, or protocol engine, must be updated to the new CAN FD standard. 
+
+CAN FD will be backward compatible to classic CAN. However, original CAN controllers are not forward compatible to CAN FD. 
+
+Physical layer-- the PHY or transceiver. Original CAN transceivers, cabling, connectors, protection circuitry meeting the CAN requirements for 1 megabit per second, may all be used for CAN FD at up to 1 megabit per second. 
+
+Just like CAN, CAN FD will scale down in data rates based on long cabling and the high node count or loading. 
+
+Greater than 1 megabit per second, CAN FD data rates may require changes. 
+
+Software-- low-level drivers for the new CAN controllers on the MCU must be updated to new register map and longer payload options. 
+
+Application software must be adapted to handle the longer data payloads. 
+
+14-pin CAN transceivers keep the same base functionality as 8-pin transceivers but add several different functions, such as the ability to run off a battery in low-power mode, advanced fault detection, and the ability to signal the rest of the system to start-up based on wake-up commands issued via the wake pin or CAN bus. 
+
+Thank you for watching. 
